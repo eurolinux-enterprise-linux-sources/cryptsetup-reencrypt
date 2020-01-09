@@ -1,0 +1,15 @@
+diff -rupN cryptsetup-1.6.4.old/po/POTFILES.in cryptsetup-1.6.4/po/POTFILES.in
+--- cryptsetup-1.6.4.old/po/POTFILES.in	2014-06-18 13:03:04.022212108 +0200
++++ cryptsetup-1.6.4/po/POTFILES.in	2014-06-18 14:47:26.994389869 +0200
+@@ -11,11 +11,6 @@ lib/luks1/af.c
+ lib/luks1/keyencryption.c
+ lib/luks1/keymanage.c
+ lib/loopaes/loopaes.c
+-lib/tcrypt/tcrypt.c
+-lib/verity/verity.c
+-lib/verity/verity_hash.c
+-src/cryptsetup.c
+-src/veritysetup.c
+ src/cryptsetup_reencrypt.c
+ src/utils_tools.c
+ src/utils_password.c

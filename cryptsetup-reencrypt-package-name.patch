@@ -1,0 +1,26 @@
+diff -rupN cryptsetup-1.6.4.old/configure cryptsetup-1.6.4/configure
+--- cryptsetup-1.6.4.old/configure	2014-06-18 13:03:04.034212062 +0200
++++ cryptsetup-1.6.4/configure	2014-06-18 14:45:09.196878721 +0200
+@@ -585,10 +585,10 @@ MFLAGS=
+ MAKEFLAGS=
+ 
+ # Identity of this package.
+-PACKAGE_NAME='cryptsetup'
+-PACKAGE_TARNAME='cryptsetup'
++PACKAGE_NAME='cryptsetup-reencrypt'
++PACKAGE_TARNAME='cryptsetup-reencrypt'
+ PACKAGE_VERSION='1.6.4'
+-PACKAGE_STRING='cryptsetup 1.6.4'
++PACKAGE_STRING='cryptsetup-reencrypt 1.6.4'
+ PACKAGE_BUGREPORT=''
+ PACKAGE_URL=''
+ 
+@@ -3032,7 +3032,7 @@ fi
+ 
+ 
+ # Define the identity of the package.
+- PACKAGE='cryptsetup'
++ PACKAGE='cryptsetup-reencrypt'
+  VERSION='1.6.4'
+ 
+ 

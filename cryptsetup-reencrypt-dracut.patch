@@ -1,0 +1,41 @@
+diff --git a/misc/dracut_90reencrypt/check.old b/misc/dracut_90reencrypt/check.old
+index 53010b3..7e7a683 100755
+--- a/misc/dracut_90reencrypt/check.old
++++ b/misc/dracut_90reencrypt/check.old
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+ 
+-which cryptsetup-reencrypt >/dev/null 2>&1 || exit 1
++[ -x /sbin/cryptsetup-reencrypt ] || exit 1
+ 
+-exit 0
++exit 255
+diff --git a/misc/dracut_90reencrypt/install.old b/misc/dracut_90reencrypt/install.old
+index 6e0523b..573cd12 100755
+--- a/misc/dracut_90reencrypt/install.old
++++ b/misc/dracut_90reencrypt/install.old
+@@ -1,6 +1,13 @@
+ #!/bin/bash
+ 
+-inst cryptsetup-reencrypt
++if dracut_module_included crypt; then
++	derror "'reencrypt' can't be installed together with 'crypt'."
++	derror "Add '-o crypt' option to install reencrypt module."
++
++	return 1
++fi
++
++dracut_install cryptsetup-reencrypt
+ 
+ inst_hook cmdline 30 "$moddir/parse-reencrypt.sh"
+-inst "$moddir"/reencrypt.sh /sbin/reencrypt
++inst_simple "$moddir"/reencrypt.sh /sbin/reencrypt
+diff --git a/misc/dracut_90reencrypt/installkernel.old b/misc/dracut_90reencrypt/installkernel.old
+new file mode 100755
+index 0000000..202b100
+--- /dev/null
++++ b/misc/dracut_90reencrypt/installkernel.old
+@@ -0,0 +1,3 @@
++#!/bin/bash
++
++hostonly='' instmods dm_crypt =crypto loop
