@@ -15,7 +15,7 @@
 Summary: A utility for offline reencryption of LUKS encrypted disks.
 Name: cryptsetup-reencrypt
 Version: 1.6.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+ and LGPLv2+
 Group: Applications/System
 URL: http://cryptsetup.googlecode.com/
@@ -35,6 +35,8 @@ Patch0:  cryptsetup-reencrypt-package-name.patch
 Patch1:  cryptsetup-reencrypt-remove-unused-l18n.patch
 Patch2:  cryptsetup-1.6.5-reencrypt-fips.patch
 Patch3:  cryptsetup-reencrypt-dracut.patch
+Patch4:  cryptsetup-1.6.6-use_fsync_instead_odirect_in_log_files.patch
+Patch5:  cryptsetup-1.6.8-remove-experimental-warning.patch
 
 %description
 This package contains cryptsetup-reencrypt utility which
@@ -63,6 +65,8 @@ This package contains the cryptsetup shared library, libcryptsetup.
 %if %{enable_dracut}
 %patch3 -p1
 %endif
+%patch4 -p1
+%patch5 -p1
 
 %build
 %configure --sbindir=%{_root_sbindir} --libdir=/%{_lib} --enable-cryptsetup-reencrypt --disable-veritysetup --disable-kernel_crypto --with-luks1-mode=cbc-essiv:sha256 --%{fips_string}-fips
@@ -120,5 +124,10 @@ install -m755 misc/dracut_90reencrypt/reencrypt.sh $RPM_BUILD_ROOT/%{dracutmodul
 %clean
 
 %changelog
+* Mon Jan 18 2016 Ondrej Kozina <okozina@redhat.com> - 1.6.4-2
+- patch: use fsync instead of O_DIRECT mode while writting reencryption log.
+- patch: remove warning phrase while invoking cryptsetup-reencrypt tool.
+- Resolves: #1130141 #1140201
+
 * Mon Jun 16 2014 Ondrej Kozina <okozina@redhat.com> - 1.6.4-1
 - initial release

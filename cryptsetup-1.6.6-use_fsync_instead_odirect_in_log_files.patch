@@ -1,0 +1,61 @@
+diff -rupN cryptsetup-1.6.4.old/man/cryptsetup-reencrypt.8 cryptsetup-1.6.4.new/man/cryptsetup-reencrypt.8
+--- cryptsetup-1.6.4.old/man/cryptsetup-reencrypt.8	2016-01-18 15:01:56.396211896 +0100
++++ cryptsetup-1.6.4.new/man/cryptsetup-reencrypt.8	2016-01-18 15:04:39.963077712 +0100
+@@ -158,13 +158,15 @@ WARNING: This is destructive operation a
+ 
+ .TP
+ .B "\-\-use-directio"
+-Use direct-io (O_DIRECT) for all read/write data operations.
++Use direct-io (O_DIRECT) for all read/write data operations related
++to block device undergoing reencryption.
+ 
+ Usefull if direct-io operations perform better than normal buffered
+ operations (e.g. in virtual environments).
+ .TP
+ .B "\-\-use-fsync"
+-Use fsync call after every written block.
++Use fsync call after every written block. This applies for reencryption
++log files as well.
+ .TP
+ .B "\-\-write-log"
+ Update log file after every block write. This can slow down reencryption
+diff -rupN cryptsetup-1.6.4.old/src/cryptsetup_reencrypt.c cryptsetup-1.6.4.new/src/cryptsetup_reencrypt.c
+--- cryptsetup-1.6.4.old/src/cryptsetup_reencrypt.c	2016-01-18 15:01:56.395211897 +0100
++++ cryptsetup-1.6.4.new/src/cryptsetup_reencrypt.c	2016-01-18 15:02:54.078164575 +0100
+@@ -76,7 +76,7 @@ struct reenc_ctx {
+ 	char crypt_path_org[PATH_MAX];
+ 	char crypt_path_new[PATH_MAX];
+ 	int log_fd;
+-	char *log_buf;
++	char log_buf[SECTOR_SIZE];
+ 
+ 	struct {
+ 		char *password;
+@@ -351,13 +351,11 @@ static void close_log(struct reenc_ctx *
+ 	log_dbg("Closing LUKS reencryption log file %s.", rc->log_file);
+ 	if (rc->log_fd != -1)
+ 		close(rc->log_fd);
+-	free(rc->log_buf);
+-	rc->log_buf = NULL;
+ }
+ 
+ static int open_log(struct reenc_ctx *rc)
+ {
+-	int flags = opt_directio ? O_DIRECT : 0;
++	int flags = opt_fsync ? O_SYNC : 0;
+ 
+ 	rc->log_fd = open(rc->log_file, O_RDWR|O_EXCL|O_CREAT|flags, S_IRUSR|S_IWUSR);
+ 	if (rc->log_fd != -1) {
+@@ -371,12 +369,6 @@ static int open_log(struct reenc_ctx *rc
+ 	if (rc->log_fd == -1)
+ 		return -EINVAL;
+ 
+-	if (posix_memalign((void *)&rc->log_buf, alignment(rc->log_fd), SECTOR_SIZE)) {
+-		log_err(_("Allocation of aligned memory failed.\n"));
+-		close_log(rc);
+-		return -ENOMEM;
+-	}
+-
+ 	if (!rc->in_progress && write_log(rc) < 0) {
+ 		close_log(rc);
+ 		return -EIO;

@@ -1,0 +1,37 @@
+commit 1623ee71abb5bccb69ff691857d8f674b4f6dba4
+Author: Milan Broz <gmazyland@gmail.com>
+Date:   Thu Oct 29 12:16:37 2015 +0100
+
+    Remove experimental warning for reencrypt tool.
+
+diff --git a/man/cryptsetup-reencrypt.8 b/man/cryptsetup-reencrypt.8
+index bfb7e23..f30a800 100644
+--- a/man/cryptsetup-reencrypt.8
++++ b/man/cryptsetup-reencrypt.8
+@@ -19,8 +19,6 @@ or kernel failures during reencryption (you can lose you data in this case).
+ 
+ \fIALWAYS BE SURE YOU HAVE RELIABLE BACKUP BEFORE USING THIS TOOL.\fR
+ .br
+-\fITHIS TOOL IS EXPERIMENTAL.\fR
+-
+ The reencryption can be temporarily suspended (by TERM signal or by
+ using ctrl+c) but you need to retain temporary files named LUKS-<uuid>.[log|org|new].
+ LUKS device is unavailable until reencryption is finished though.
+diff --git a/src/cryptsetup_reencrypt.c b/src/cryptsetup_reencrypt.c
+index a6e077f..be495b9 100644
+--- a/src/cryptsetup_reencrypt.c
++++ b/src/cryptsetup_reencrypt.c
+@@ -1329,12 +1329,10 @@ int main(int argc, const char **argv)
+ 		exit(EXIT_SUCCESS);
+ 	}
+ 
+-	if (!opt_batch_mode) {
+-		log_std(_("WARNING: this is experimental code, it can completely break your data.\n"));
++	if (!opt_batch_mode)
+ 		log_verbose(_("Reencryption will change: volume key%s%s%s%s.\n"),
+ 			opt_hash   ? _(", set hash to ")  : "", opt_hash   ?: "",
+ 			opt_cipher ? _(", set cipher to "): "", opt_cipher ?: "");
+-	}
+ 
+ 	action_argv = poptGetArgs(popt_context);
+ 	if(!action_argv)
